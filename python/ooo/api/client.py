@@ -1,7 +1,7 @@
 import requests
 import urllib.parse
 
-from   ooo import DEFAULT_PORT
+from   . import DEFAULT_PORT
 import ooo.dates
 from   ooo.model import StatusRecord
 

@@ -1,18 +1,18 @@
 import datetime
 import flask
 
-from   ooo.dates import parse_dates
-from   ooo.db import SqliteDB
+from   ..dates import parse_dates
+from   ..db import SqliteDB
 
 #-------------------------------------------------------------------------------
 
-api = flask.Blueprint("ooo", __name__)
+API = flask.Blueprint("ooo", __name__)
 
 def _get_db():
     return SqliteDB.open(flask.current_app.db_path)
 
 
-@api.route("/search", methods=["GET"])
+@API.route("/search", methods=["GET"])
 def get_search():
     name    = flask.request.args.get("name", None)
     dates   = flask.request.args.get("dates", None)

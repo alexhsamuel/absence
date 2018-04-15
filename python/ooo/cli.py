@@ -1,7 +1,7 @@
 from   argparse import ArgumentParser
 import datetime
 
-import ooo.client
+import ooo.api.client
 
 #-------------------------------------------------------------------------------
 
@@ -10,7 +10,7 @@ def main():
     args = parser.parse_args()
     hostname = "localhost"  # FIXME
 
-    client = ooo.client.Client(hostname)
+    client = ooo.api.client.Client(hostname)
     for rec in client.search():
         print(rec)
 
