@@ -15,4 +15,17 @@ class StatusRecord:
         )
 
 
+    def to_jso(self):
+        return {
+            "id"    : self.id,
+            "name"  : self.name,
+            "dates" : {
+                "start" : self.dates.start,
+                "stop"  : self.dates.stop,
+            },
+            "status": self.status,
+            "notes" : self.notes,
+        }
+
+
 
