@@ -62,6 +62,7 @@ class SqliteDB:
             )
             status.id = cursor.lastrowid
         self.__conn.commit()
+        return status
 
 
     def delete(self, id):

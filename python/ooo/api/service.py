@@ -3,6 +3,7 @@ import flask
 
 from   ..dates import parse_dates
 from   ..db import SqliteDB
+from   ..model import StatusRecord
 
 #-------------------------------------------------------------------------------
 
@@ -10,6 +11,16 @@ API = flask.Blueprint("ooo", __name__)
 
 def _get_db():
     return SqliteDB.open(flask.current_app.db_path)
+
+
+@API.route("/status", methods=["POST"])
+def post_status():
+    jso = flask.request.json
+    status = StatusRecord.from_jso(jso["status"])
+    status = _get_db().insert(status)
+    return flask.jsonify({
+        "status": status.to_jso(),
+    })
 
 
 @API.route("/search", methods=["GET"])
@@ -24,6 +35,5 @@ def get_search():
     return flask.jsonify({
         "results": [ r.to_jso() for r in recs ],
     })
-
 
 

@@ -26,6 +26,19 @@ class Client:
         ))
 
 
+    def insert(self, status):
+        url = self.__make_url("status")
+
+        jso = {
+            "status": status.to_jso(),
+        }
+        response = requests.post(url, json=jso)
+        response.raise_for_status()
+        jso = response.json()
+
+        return StatusRecord.from_jso(jso["status"])
+        
+
     def search(self, name=None, dates=None, status=None):
         url = self.__make_url(
             "search", 
