@@ -27,11 +27,11 @@ def post_status():
 def get_search():
     name    = flask.request.args.get("name", None)
     dates   = flask.request.args.get("dates", None)
-    status  = flask.request.args.get("status", None)
+    code    = flask.request.args.get("code", None)
 
     dates   = slice(None, None) if dates is None else parse_dates(dates)
 
-    recs = _get_db().search(name=name, dates=dates, status=status)
+    recs = _get_db().search(name=name, dates=dates, code=code)
     return flask.jsonify({
         "results": [ r.to_jso() for r in recs ],
     })

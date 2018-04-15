@@ -39,12 +39,12 @@ class Client:
         return StatusRecord.from_jso(jso["status"])
         
 
-    def search(self, name=None, dates=None, status=None):
+    def search(self, name=None, dates=None, code=None):
         url = self.__make_url(
             "search", 
             name    =name, 
             dates   =None if dates is None else ooo.dates.format_dates(dates),
-            status  =status
+            code    =code
         )
 
         response = requests.get(url)

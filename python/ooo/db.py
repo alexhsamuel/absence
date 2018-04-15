@@ -6,10 +6,22 @@ from   .model import StatusRecord
 
 #-------------------------------------------------------------------------------
 
+DEFAULT_CODES = {
+    "vacation",
+    "remote",
+    "medical",
+    "personal",
+}
+
+
 class SqliteDB:
 
     def __init__(self, conn):
         self.__conn = conn
+
+        with closing(self.__conn.cursor()) as cursor:
+            cursor.execute("SELECT code FROM codes")
+            self.__codes = { c for c, in cursor }
 
 
     def close(self):
@@ -17,8 +29,13 @@ class SqliteDB:
         self.__conn = None
 
 
+    @property
+    def codes(self):
+        return self.__codes
+
+
     @classmethod
-    def create(cls, path):
+    def create(cls, path, codes=DEFAULT_CODES):
         path = Path(path)
         # FIXME: Race.
         if path.exists():
@@ -30,10 +47,20 @@ class SqliteDB:
                     name        TEXT NOT NULL,
                     dates_start DATE,
                     dates_stop  DATE,
-                    status      TEXT NOT NULL,
+                    code        TEXT NOT NULL,
                     notes       TEXT
                 )
             """)
+            conn.execute("""
+                CREATE TABLE codes (
+                    code        TEXT
+                )
+            """)
+            conn.executemany(
+                "INSERT INTO codes VALUES (?)",
+                [ (s, ) for s in codes ]
+            )
+            conn.commit()
 
         return cls.open(path)
 
@@ -44,10 +71,14 @@ class SqliteDB:
         if not path.exists():
             raise FileNotFoundError(path)
         conn = sqlite3.connect(str(path), detect_types=True)
+
         return cls(conn)
 
 
     def insert(self, status):
+        if status.code not in self.codes:
+            raise ValueError("invalid code: {}".format(status.code))
+
         with closing(self.__conn.cursor()) as cursor:
             cursor.execute(
                 "INSERT INTO status VALUES (?, ?, ?, ?, ?, ?)",
@@ -56,7 +87,7 @@ class SqliteDB:
                      status.name,
                      status.dates.start,
                      status.dates.stop,
-                     status.status,
+                     status.code,
                      status.notes,
                  )
             )
@@ -79,11 +110,11 @@ class SqliteDB:
                 "UPDATE status SET deleted = true WHERE rowid = ?", (id, ))
 
 
-    def search(self, name=None, dates=None, status=None):
+    def search(self, name=None, dates=None, code=None):
         conditions = ["NOT DELETED"]
         parameters = []
         if name is not None:
-            conditions.append("NAME = ?")
+            conditions.append("name = ?")
             parameters.append(name)
         if dates is None:
             dates = slice(None, None)
@@ -93,14 +124,17 @@ class SqliteDB:
         if dates.stop is not None:
             conditions.append("(dates_start IS NULL or dates_start < ?)")
             parameters.append(dates.stop)
+        if code is not None:
+            conditions.append("code = ?")
+            parameters.append(code)
         sql = "SELECT rowid, * FROM status WHERE " + " AND ".join(conditions)
         print(sql, parameters)
 
         with closing(self.__conn.cursor()) as cursor:
             cursor.execute(sql, parameters)
-            for id, _, name, dates_start, dates_end, status, notes in cursor:
+            for id, _, name, dates_start, dates_end, code, notes in cursor:
                 rec = StatusRecord(
-                    name, slice(dates_start, dates_end), status, notes)
+                    name, slice(dates_start, dates_end), code, notes)
                 rec.id = id
                 yield rec
 

@@ -4,18 +4,18 @@ from   . import dates
 
 class StatusRecord:
 
-    def __init__(self, name, dates, status, notes):
+    def __init__(self, name, dates, code, notes):
         self.id     = None
         self.name   = name
         self.dates  = dates
-        self.status = status
+        self.code   = code
         self.notes  = notes
 
 
     def __repr__(self):
         return "{}({!r}, {}:{}, {!r}, {!r})".format(
             self.__class__.__name__, self.name, self.dates.start, 
-            self.dates.stop, self.status, self.notes,
+            self.dates.stop, self.code, self.notes,
         )
 
 
@@ -24,7 +24,7 @@ class StatusRecord:
             "id"    : self.id,
             "name"  : self.name,
             "dates" : dates.dates_to_jso(self.dates),
-            "status": self.status,
+            "code"  : self.code,
             "notes" : self.notes,
         }
 
@@ -34,7 +34,7 @@ class StatusRecord:
         rec = Class(
             jso["name"],
             dates.dates_from_jso(jso["dates"]),
-            jso["status"],
+            jso["code"],
             jso["notes"],
         )
         rec.id = jso["id"]
