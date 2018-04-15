@@ -7,22 +7,6 @@ from   ooo.model import StatusRecord
 
 #-------------------------------------------------------------------------------
 
-def create_db(path):
-    db = ooo.db.SqlLiteDB.create(path)
-    db.insert(StatusRecord(
-        "asamuel", 
-        slice(date(2018, 2, 1), date(2018, 3, 1)),
-        "vacation", 
-        "In Kamchatka.",
-    ))
-    db.insert(StatusRecord(
-        "asamuel", 
-        slice(date(2018, 4, 1), date(2018, 5, 11)),
-        "vacation", 
-        "In Antarctica.",
-    ))
-
-
 def test_create(tmpdir):
     path = Path(tmpdir) / "test_create.sqlite"
     rec = StatusRecord(
@@ -31,14 +15,14 @@ def test_create(tmpdir):
         "vacation", 
         "In Scotland.",
     )
-    with closing(ooo.db.SqlLiteDB.create(path)) as db:
+    with closing(ooo.db.SqliteDB.create(path)) as db:
         db.insert(rec)
     assert rec.id is not None
 
 
 def test_query_dates(tmpdir):
     path = Path(tmpdir) / "test_query_dates.sqlite"
-    db = ooo.db.SqlLiteDB.create(path)
+    db = ooo.db.SqliteDB.create(path)
     db.insert(StatusRecord(
         "asamuel", 
         slice(date(2018, 2, 1), date(2018, 3, 1)),

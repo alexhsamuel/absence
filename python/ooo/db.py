@@ -6,7 +6,7 @@ from   .model import StatusRecord
 
 #-------------------------------------------------------------------------------
 
-class SqlLiteDB:
+class SqliteDB:
 
     def __init__(self, conn):
         self.__conn = conn
