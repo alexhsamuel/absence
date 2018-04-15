@@ -1,3 +1,7 @@
+from   . import dates
+
+#-------------------------------------------------------------------------------
+
 class StatusRecord:
 
     def __init__(self, name, dates, status, notes):
@@ -19,13 +23,22 @@ class StatusRecord:
         return {
             "id"    : self.id,
             "name"  : self.name,
-            "dates" : {
-                "start" : self.dates.start,
-                "stop"  : self.dates.stop,
-            },
+            "dates" : dates.dates_to_jso(self.dates),
             "status": self.status,
             "notes" : self.notes,
         }
+
+
+    @classmethod
+    def from_jso(Class, jso):
+        rec = Class(
+            jso["name"],
+            dates.dates_from_jso(jso["dates"]),
+            jso["status"],
+            jso["notes"],
+        )
+        rec.id = jso["id"]
+        return rec
 
 
 

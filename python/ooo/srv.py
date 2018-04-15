@@ -3,6 +3,7 @@ import flask
 import logging
 from   pathlib import Path
 
+from   ooo import DEFAULT_PORT
 import ooo.api
 from   ooo.db import SqliteDB
 
@@ -23,8 +24,8 @@ def main():
         "--host", metavar="ADDR", default="localhost",
         help="serve on ADDR [def: localhost]")
     parser.add_argument(
-        "--port", metavar="PORT", type=int, default=8000,
-        help="serve on PORT [def: 8000]")
+        "--port", metavar="PORT", type=int, default=DEFAULT_PORT,
+        help="serve on PORT [def: {}]".format)
     parser.add_argument(
         "--repo", metavar="PATH", type=Path, default=Path("./repo"),
         help="use repo dir at PATH")

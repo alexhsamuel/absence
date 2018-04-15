@@ -1,22 +1,17 @@
 from   argparse import ArgumentParser
 import datetime
 
-from   ooo.db import SqliteDB
+import ooo.client
 
 #-------------------------------------------------------------------------------
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument(
-        "--db", metavar="FILE", default="./ooo.sqlite",
-        help="path to database")
-    parser.add_argument(
-        "--create-db", action="store_true", default=False,
-        help="create the database")
     args = parser.parse_args()
+    hostname = "localhost"  # FIXME
 
-    db = SqliteDB.create(args.db) if args.create_db else SqliteDB.open(args.db)
-    for rec in db.search():
+    client = ooo.client.Client(hostname)
+    for rec in client.search():
         print(rec)
 
 

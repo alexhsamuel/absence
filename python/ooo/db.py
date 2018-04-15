@@ -23,18 +23,19 @@ class SqliteDB:
         # FIXME: Race.
         if path.exists():
             raise FileExistsError(path)
-        conn = sqlite3.connect(str(path))
-        conn.execute("""
-            CREATE TABLE status (
-                deleted     BOOL NOT NULL,
-                name        TEXT NOT NULL,
-                dates_start DATE,
-                dates_stop  DATE,
-                status      TEXT NOT NULL,
-                notes       TEXT
-            )
-        """)
-        return cls(conn)
+        with sqlite3.connect(str(path)) as conn:
+            conn.execute("""
+                CREATE TABLE status (
+                    deleted     BOOL NOT NULL,
+                    name        TEXT NOT NULL,
+                    dates_start DATE,
+                    dates_stop  DATE,
+                    status      TEXT NOT NULL,
+                    notes       TEXT
+                )
+            """)
+
+        return cls.open(path)
 
 
     @classmethod
@@ -42,7 +43,7 @@ class SqliteDB:
         path = Path(path)
         if not path.exists():
             raise FileNotFoundError(path)
-        conn = sqlite3.connect(str(path))
+        conn = sqlite3.connect(str(path), detect_types=True)
         return cls(conn)
 
 
@@ -77,12 +78,14 @@ class SqliteDB:
                 "UPDATE status SET deleted = true WHERE rowid = ?", (id, ))
 
 
-    def search(self, name=None, dates=slice(None, None), status=None):
+    def search(self, name=None, dates=None, status=None):
         conditions = ["NOT DELETED"]
         parameters = []
         if name is not None:
             conditions.append("NAME = ?")
             parameters.append(name)
+        if dates is None:
+            dates = slice(None, None)
         if dates.start is not None:
             conditions.append("(dates_stop IS NULL OR dates_stop > ?)")
             parameters.append(dates.start)
