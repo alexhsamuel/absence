@@ -2,8 +2,8 @@ import requests
 import urllib.parse
 
 from   . import DEFAULT_PORT
-import ooo.dates
-from   ooo.model import Absence
+import absence.dates
+from   absence.model import Absence
 
 #-------------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ class Client:
         url = self.__make_url(
             "search", 
             name    =name, 
-            dates   =None if dates is None else ooo.dates.format_dates(dates),
+            dates   =None if dates is None else absence.dates.format_dates(dates),
             code    =code
         )
 

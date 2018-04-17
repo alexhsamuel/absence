@@ -7,7 +7,7 @@ from   ..model import Absence, AbsenceError
 
 #-------------------------------------------------------------------------------
 
-API = flask.Blueprint("ooo", __name__)
+API = flask.Blueprint("absence", __name__)
 
 def _get_db():
     return SqliteDB.open(flask.current_app.db_path)

@@ -1,12 +1,12 @@
 from   datetime import date
 
-import ooo.db
-from   ooo.model import Absence
+import absence.db
+from   absence.model import Absence
 
 #-------------------------------------------------------------------------------
 
 def create_db(path):
-    db = ooo.db.SqliteDB.create(path)
+    db = absence.db.SqliteDB.create(path)
     db.insert(Absence(
         "asamuel", 
         slice(date(2018, 2, 1), date(2018, 3, 1)),

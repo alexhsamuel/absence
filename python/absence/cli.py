@@ -3,9 +3,9 @@ import datetime
 import os
 import pwd
 
-import ooo.api.client
-from   ooo.dates import parse_date, DAY
-from   ooo.model import Absence
+import absence.api.client
+from   absence.dates import parse_date, DAY
+from   absence.model import Absence
 
 #-------------------------------------------------------------------------------
 
@@ -59,7 +59,7 @@ def main():
     args = parser.parse_args()
 
     hostname = "localhost"  # FIXME
-    client = ooo.api.client.Client(hostname)
+    client = absence.api.client.Client(hostname)
     args.cmd(client, args)
 
 

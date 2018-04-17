@@ -2,8 +2,8 @@ from   contextlib import closing
 from   datetime import date
 from   pathlib import Path
 
-import ooo.db
-from   ooo.model import Absence
+import absence.db
+from   absence.model import Absence
 
 #-------------------------------------------------------------------------------
 
@@ -15,14 +15,14 @@ def test_create(tmpdir):
         "vacation", 
         "In Scotland.",
     )
-    with closing(ooo.db.SqliteDB.create(path)) as db:
+    with closing(absence.db.SqliteDB.create(path)) as db:
         db.insert(rec)
     assert rec.id is not None
 
 
 def test_query_dates(tmpdir):
     path = Path(tmpdir) / "test_query_dates.sqlite"
-    db = ooo.db.SqliteDB.create(path)
+    db = absence.db.SqliteDB.create(path)
     db.insert(Absence(
         "asamuel", 
         slice(date(2018, 2, 1), date(2018, 3, 1)),
