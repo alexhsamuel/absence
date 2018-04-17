@@ -3,7 +3,7 @@ import flask
 
 from   ..dates import parse_dates
 from   ..db import SqliteDB
-from   ..model import StatusRecord, StatusError
+from   ..model import Absence, AbsenceError
 
 #-------------------------------------------------------------------------------
 
@@ -22,16 +22,16 @@ def _error(message, status):
     }), status
 
 
-@API.route("/status", methods=["POST"])
-def post_status():
+@API.route("/absence", methods=["POST"])
+def post_absence():
     jso = flask.request.json
-    status = StatusRecord.from_jso(jso["status"])
+    absence = Absence.from_jso(jso["absence"])
     try:
-        status = _get_db().insert(status)
-    except StatusError as exc:
+        absence = _get_db().insert(absence)
+    except AbsenceError as exc:
         return _error(exc, 400)
     return flask.jsonify({
-        "absence": status.to_jso(),
+        "absence": absence.to_jso(),
     })
 
 

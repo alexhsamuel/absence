@@ -5,7 +5,7 @@ import pwd
 
 import ooo.api.client
 from   ooo.dates import parse_date, DAY
-from   ooo.model import StatusRecord
+from   ooo.model import Absence
 
 #-------------------------------------------------------------------------------
 
@@ -13,10 +13,10 @@ def cmd_add(client, args):
     start = parse_date(args.start)
     end = parse_date(args.end)
     end = start if end is None else end
-    status = StatusRecord(
-        args.name, slice(start, end + DAY), args.status, args.notes)
-    status = client.insert(status)
-    print(status.id)
+    dates = slice(start, end + DAY)
+    absence = Absence(args.name, dates, args.code, args.notes)
+    absence = client.insert(absence)
+    print(absence.id)
 
 
 def cmd_show(client, args):
@@ -38,8 +38,8 @@ def main():
     cmd = cmds.add_parser("add")
     cmd.set_defaults(cmd=cmd_add)
     cmd.add_argument(
-        "status", metavar="STATUS", # FIXME: Choices.
-        help="status to set")
+        "code", metavar="CODE", # FIXME: Choices.
+        help="absence code to use")
     cmd.add_argument(
         "start", metavar="DATE", 
         help="start date")
@@ -48,7 +48,7 @@ def main():
         help="end date [def: start date]")
     cmd.add_argument(
         "--name", metavar="NAME", default=name,
-        help="set status for NAME [def: {}]".format(name))
+        help="set absence for NAME [def: {}]".format(name))
     cmd.add_argument(
         "--notes", metavar="TEXT", default=None,
         help="additional notes")

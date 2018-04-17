@@ -3,13 +3,13 @@ from   datetime import date
 from   pathlib import Path
 
 import ooo.db
-from   ooo.model import StatusRecord
+from   ooo.model import Absence
 
 #-------------------------------------------------------------------------------
 
 def test_create(tmpdir):
     path = Path(tmpdir) / "test_create.sqlite"
-    rec = StatusRecord(
+    rec = Absence(
         "asamuel", 
         slice(date(2018, 4, 9), date(2018, 4, 13)),
         "vacation", 
@@ -23,13 +23,13 @@ def test_create(tmpdir):
 def test_query_dates(tmpdir):
     path = Path(tmpdir) / "test_query_dates.sqlite"
     db = ooo.db.SqliteDB.create(path)
-    db.insert(StatusRecord(
+    db.insert(Absence(
         "asamuel", 
         slice(date(2018, 2, 1), date(2018, 3, 1)),
         "vacation", 
         "In Kamchatka.",
     ))
-    db.insert(StatusRecord(
+    db.insert(Absence(
         "asamuel", 
         slice(date(2018, 4, 1), date(2018, 5, 11)),
         "vacation", 

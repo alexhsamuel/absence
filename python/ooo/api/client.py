@@ -3,7 +3,7 @@ import urllib.parse
 
 from   . import DEFAULT_PORT
 import ooo.dates
-from   ooo.model import StatusRecord
+from   ooo.model import Absence
 
 #-------------------------------------------------------------------------------
 
@@ -28,17 +28,17 @@ class Client:
         ))
 
 
-    def insert(self, status):
-        url = self.__make_url("status")
+    def insert(self, absence):
+        url = self.__make_url("absence")
 
         jso = {
-            "status": status.to_jso(),
+            "absence": absence.to_jso(),
         }
         response = requests.post(url, json=jso)
         response.raise_for_status()
         jso = response.json()
 
-        return StatusRecord.from_jso(jso["absence"])
+        return Absence.from_jso(jso["absence"])
         
 
     def search(self, name=None, dates=None, code=None):
@@ -53,7 +53,7 @@ class Client:
         response.raise_for_status()
         jso = response.json()
 
-        return [ StatusRecord.from_jso(o) for o in jso["absences"] ]
+        return [ Absence.from_jso(o) for o in jso["absences"] ]
 
 
 

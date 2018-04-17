@@ -2,7 +2,7 @@ from   contextlib import closing
 from   pathlib import Path
 import sqlite3
 
-from   .model import StatusRecord, InvalidCodeError
+from   .model import Absence, InvalidCodeError
 
 #-------------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ class SqliteDB:
             raise FileExistsError(path)
         with sqlite3.connect(str(path)) as conn:
             conn.execute("""
-                CREATE TABLE status (
+                CREATE TABLE absence (
                     deleted     BOOL NOT NULL,
                     name        TEXT NOT NULL,
                     dates_start DATE,
@@ -75,31 +75,31 @@ class SqliteDB:
         return cls(conn)
 
 
-    def insert(self, status):
-        if status.code not in self.codes:
-            raise InvalidCodeError("invalid code: {}".format(status.code))
+    def insert(self, absence):
+        if absence.code not in self.codes:
+            raise InvalidCodeError("invalid code: {}".format(absence.code))
 
         with closing(self.__conn.cursor()) as cursor:
             cursor.execute(
-                "INSERT INTO status VALUES (?, ?, ?, ?, ?, ?)",
+                "INSERT INTO absence VALUES (?, ?, ?, ?, ?, ?)",
                  (
                      False,
-                     status.name,
-                     status.dates.start,
-                     status.dates.stop,
-                     status.code,
-                     status.notes,
+                     absence.name,
+                     absence.dates.start,
+                     absence.dates.stop,
+                     absence.code,
+                     absence.notes,
                  )
             )
-            status.id = cursor.lastrowid
+            absence.id = cursor.lastrowid
         self.__conn.commit()
-        return status
+        return absence
 
 
     def delete(self, id):
         with closing(self.__conn.cursor()) as cursor:
             cursor.execute(
-                "SELECT COUNT(*) FROM status WHERE NOT deleted AND rowid = ?", 
+                "SELECT COUNT(*) FROM absence WHERE NOT deleted AND rowid = ?", 
                 (id, ))
             (count, ), = cursor
             if count == 0:
@@ -107,7 +107,7 @@ class SqliteDB:
             assert count == 1
 
             cursor.execute(
-                "UPDATE status SET deleted = true WHERE rowid = ?", (id, ))
+                "UPDATE absence SET deleted = true WHERE rowid = ?", (id, ))
 
 
     def search(self, name=None, dates=None, code=None):
@@ -127,14 +127,13 @@ class SqliteDB:
         if code is not None:
             conditions.append("code = ?")
             parameters.append(code)
-        sql = "SELECT rowid, * FROM status WHERE " + " AND ".join(conditions)
+        sql = "SELECT rowid, * FROM absence WHERE " + " AND ".join(conditions)
         print(sql, parameters)
 
         with closing(self.__conn.cursor()) as cursor:
             cursor.execute(sql, parameters)
             for id, _, name, dates_start, dates_end, code, notes in cursor:
-                rec = StatusRecord(
-                    name, slice(dates_start, dates_end), code, notes)
+                rec = Absence(name, slice(dates_start, dates_end), code, notes)
                 rec.id = id
                 yield rec
 

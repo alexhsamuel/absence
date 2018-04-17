@@ -2,19 +2,19 @@ from   . import dates
 
 #-------------------------------------------------------------------------------
 
-class StatusError(RuntimeError):
+class AbsenceError(RuntimeError):
 
     pass
 
 
 
-class InvalidCodeError(StatusError):
+class InvalidCodeError(AbsenceError):
 
     pass
 
 
 
-class StatusRecord:
+class Absence:
 
     def __init__(self, name, dates, code, notes):
         self.id     = None
