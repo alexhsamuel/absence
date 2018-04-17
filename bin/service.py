@@ -5,14 +5,14 @@ import flask
 import logging
 from   pathlib import Path
 
-import ooo.api
-import ooo.api.service
-from   ooo.db import SqliteDB
+import absence.api
+import absence.api.service
+from   absence.db import SqliteDB
 
 #-------------------------------------------------------------------------------
 
 app = flask.Flask(__name__)
-app.register_blueprint(ooo.api.service.API, url_prefix="/api/v1")
+app.register_blueprint(absence.api.service.API, url_prefix="/api/v1")
 
 logging.basicConfig(
     format  ="%(asctime)s [%(levelname)-7s] %(name)s: %(message)s",
@@ -24,8 +24,8 @@ parser.add_argument(
     "--host", metavar="ADDR", default="localhost",
     help="serve on ADDR [def: localhost]")
 parser.add_argument(
-    "--port", metavar="PORT", type=int, default=ooo.api.DEFAULT_PORT,
-    help="serve on PORT [def: {}]".format(ooo.api.DEFAULT_PORT))
+    "--port", metavar="PORT", type=int, default=absence.api.DEFAULT_PORT,
+    help="serve on PORT [def: {}]".format(absence.api.DEFAULT_PORT))
 parser.add_argument(
     "--repo", metavar="PATH", type=Path, default=Path("./repo"),
     help="use repo dir at PATH")
@@ -39,7 +39,7 @@ parser.add_argument(
     "--log", metavar="LEVEL", default="INFO",
     help="log at LEVEL [def: INFO]")
 parser.add_argument(
-    "--db", metavar="FILE", default="./ooo.sqlite",
+    "--db", metavar="FILE", default="./absence.sqlite",
     help="path to database")
 parser.add_argument(
     "--create-db", action="store_true", default=False,
