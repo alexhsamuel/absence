@@ -7,6 +7,8 @@ from   ooo.model import StatusRecord
 
 #-------------------------------------------------------------------------------
 
+# FIXME: On error, show response message.
+
 class Client:
 
     def __init__(self, host, port=DEFAULT_PORT, path="/api/v1"):
@@ -36,7 +38,7 @@ class Client:
         response.raise_for_status()
         jso = response.json()
 
-        return StatusRecord.from_jso(jso["status"])
+        return StatusRecord.from_jso(jso["absence"])
         
 
     def search(self, name=None, dates=None, code=None):
@@ -51,7 +53,7 @@ class Client:
         response.raise_for_status()
         jso = response.json()
 
-        return [ StatusRecord.from_jso(o) for o in jso["results"] ]
+        return [ StatusRecord.from_jso(o) for o in jso["absences"] ]
 
 
 

@@ -2,7 +2,7 @@ from   contextlib import closing
 from   pathlib import Path
 import sqlite3
 
-from   .model import StatusRecord
+from   .model import StatusRecord, InvalidCodeError
 
 #-------------------------------------------------------------------------------
 
@@ -77,7 +77,7 @@ class SqliteDB:
 
     def insert(self, status):
         if status.code not in self.codes:
-            raise ValueError("invalid code: {}".format(status.code))
+            raise InvalidCodeError("invalid code: {}".format(status.code))
 
         with closing(self.__conn.cursor()) as cursor:
             cursor.execute(

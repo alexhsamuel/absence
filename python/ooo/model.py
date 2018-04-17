@@ -2,6 +2,18 @@ from   . import dates
 
 #-------------------------------------------------------------------------------
 
+class StatusError(RuntimeError):
+
+    pass
+
+
+
+class InvalidCodeError(StatusError):
+
+    pass
+
+
+
 class StatusRecord:
 
     def __init__(self, name, dates, code, notes):

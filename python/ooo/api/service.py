@@ -3,7 +3,7 @@ import flask
 
 from   ..dates import parse_dates
 from   ..db import SqliteDB
-from   ..model import StatusRecord
+from   ..model import StatusRecord, StatusError
 
 #-------------------------------------------------------------------------------
 
@@ -13,13 +13,25 @@ def _get_db():
     return SqliteDB.open(flask.current_app.db_path)
 
 
+def _error(message, status):
+    message = str(message)
+    status = int(status)
+    return flask.jsonify({
+        "status": status,
+        "message": message,
+    }), status
+
+
 @API.route("/status", methods=["POST"])
 def post_status():
     jso = flask.request.json
     status = StatusRecord.from_jso(jso["status"])
-    status = _get_db().insert(status)
+    try:
+        status = _get_db().insert(status)
+    except StatusError as exc:
+        return _error(exc, 400)
     return flask.jsonify({
-        "status": status.to_jso(),
+        "absence": status.to_jso(),
     })
 
 
@@ -33,7 +45,7 @@ def get_search():
 
     recs = _get_db().search(name=name, dates=dates, code=code)
     return flask.jsonify({
-        "results": [ r.to_jso() for r in recs ],
+        "absences": [ r.to_jso() for r in recs ],
     })
 
 
